@@ -232,7 +232,7 @@ public class User
         for (UserRoles r : this.roles)
         {
             String myRole = "ROLE_" + r.getRole().getName().toUpperCase();
-            rtnList.add(myRole);
+            rtnList.add(new SimpleGrantedAuthority(myRole));
         }
 
         return rtnList;

@@ -13,11 +13,13 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter
 {
     private static final String RESOURCE_ID = "resource_id";
+
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception
     {
         resources.resourceId(RESOURCE_ID).stateless(false);
     }
+
     @Override
     public void configure(HttpSecurity http) throws Exception
     {
@@ -36,17 +38,20 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
             .antMatchers(HttpMethod.PUT, "/users/user/{id}").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/user/name/{userName}").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/user/name/like/{userName}").hasAnyRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/users/user").hasAnyRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/users/users").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.PATCH, "/users/user/{id}").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/user/{userid}").hasAnyRole("ADMIN")
             .antMatchers("/roles/**").hasAnyRole("ADMIN")
-            .antMatchers("./products/**").hasAnyRole("ADMIN")
-            .antMatchers("/users/**", "/oauth/revoke-token", "/logout").authenticated()
+            .antMatchers("/products/**").hasAnyRole("ADMIN")
+            .antMatchers("/users/**", "/carts/**", "/oauth/revoke-token", "/logout").authenticated()
             .and()
             .exceptionHandling()
             .accessDeniedHandler(new OAuth2AccessDeniedHandler());
         http.csrf().disable();
         http.headers().frameOptions().disable();
+
+        http.logout()
+            .disable();
     }
 }
 

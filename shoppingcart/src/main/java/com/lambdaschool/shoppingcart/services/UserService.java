@@ -42,7 +42,7 @@ public interface UserService
      * @param name The full name (String) of the User you seek.
      * @return The User with the given name or throws an exception if not found.
      */
-    User findByName(String name);
+    User findByName (String name);
 
     /**
      * Deletes the user record and its useremail items from the database based off of the provided primary key
@@ -79,4 +79,5 @@ public interface UserService
      * Deletes all record and their associated records from the database
      */
     public void deleteAll();
+
 }

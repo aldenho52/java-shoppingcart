@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -77,6 +78,15 @@ public class UserController
             String userName)
     {
         User u = userService.findByName(userName);
+        return new ResponseEntity<>(u,
+            HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/myinfo",
+        produces = "application/json")
+    public ResponseEntity<?> myinfo()
+    {
+        User u = userService.findByName(SecurityContextHolder.getContext().getAuthentication().getName());
         return new ResponseEntity<>(u,
             HttpStatus.OK);
     }

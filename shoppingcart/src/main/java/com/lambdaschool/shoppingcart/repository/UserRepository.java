@@ -26,6 +26,4 @@ public interface UserRepository
      * @return List of users whose name contain the given substring ignoring case
      */
     List<User> findByUsernameContainingIgnoreCase(String name);
-
-    User findByName(String name);
 }
