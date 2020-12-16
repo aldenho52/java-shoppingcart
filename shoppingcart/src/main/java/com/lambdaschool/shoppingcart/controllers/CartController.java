@@ -33,16 +33,18 @@ public class CartController
             HttpStatus.OK);
     }
 
-    @PutMapping(value = "/add/product/{productid}",
+    @PutMapping(value = "/add/product/{productid}/{comment}",
         produces = {"application/json"})
     public ResponseEntity<?> addToCart(
         @PathVariable
-            long productid)
+            long productid,
+        @PathVariable
+            String comment)
     {
         User u = userService.findByName(SecurityContextHolder.getContext().getAuthentication().getName());
         CartItem addCartItem = cartItemService.addToCart(u.getUserid(),
             productid,
-            "I am not working");
+            comment);
         return new ResponseEntity<>(addCartItem,
             HttpStatus.OK);
     }
