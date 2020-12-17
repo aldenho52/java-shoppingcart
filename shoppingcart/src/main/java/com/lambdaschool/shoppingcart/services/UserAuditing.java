@@ -1,5 +1,7 @@
 package com.lambdaschool.shoppingcart.services;
 
+import com.lambdaschool.shoppingcart.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,9 @@ import java.util.Optional;
 public class UserAuditing
     implements AuditorAware<String>
 {
+
+    @Autowired
+    private UserRepository userrepos;
     /**
      * The current user
      *
@@ -34,4 +39,5 @@ public class UserAuditing
         }
         return Optional.of(uname);
     }
+
 }

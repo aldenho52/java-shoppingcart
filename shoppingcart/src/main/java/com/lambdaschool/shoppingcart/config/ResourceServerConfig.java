@@ -1,5 +1,8 @@
 package com.lambdaschool.shoppingcart.config;
 
+import com.lambdaschool.shoppingcart.services.HelperFunctions;
+import com.lambdaschool.shoppingcart.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +15,12 @@ import org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHand
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter
 {
+    @Autowired
+    private HelperFunctions helperFunctions;
+
+    @Autowired
+    private UserService userService;
+
     private static final String RESOURCE_ID = "resource_id";
 
     @Override
@@ -23,6 +32,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
     @Override
     public void configure(HttpSecurity http) throws Exception
     {
+
+
         http.authorizeRequests()
             .antMatchers("/",
                 "/h2-console/**",
@@ -39,14 +50,14 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter
             .antMatchers(HttpMethod.GET, "/users/user/name/{userName}").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/user/name/like/{userName}").hasAnyRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/users").hasAnyRole("ADMIN")
-            .antMatchers(HttpMethod.PATCH, "/users/user/{id}").hasAnyRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/users/user/{userid}").hasAnyRole("ADMIN")
             .antMatchers("/roles/**").hasAnyRole("ADMIN")
             .antMatchers("/products/**").hasAnyRole("ADMIN")
             .antMatchers("/users/**", "/carts/**", "/oauth/revoke-token", "/logout").authenticated()
             .and()
             .exceptionHandling()
             .accessDeniedHandler(new OAuth2AccessDeniedHandler());
+
+
         http.csrf().disable();
         http.headers().frameOptions().disable();
 

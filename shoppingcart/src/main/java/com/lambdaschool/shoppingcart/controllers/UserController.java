@@ -1,11 +1,13 @@
 package com.lambdaschool.shoppingcart.controllers;
 
 import com.lambdaschool.shoppingcart.models.User;
+import com.lambdaschool.shoppingcart.services.HelperFunctions;
 import com.lambdaschool.shoppingcart.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,6 +30,8 @@ public class UserController
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private HelperFunctions helperFunctions;
     /**
      * Returns a list of all users
      * <br>Example: <a href="http://localhost:2019/users/users">http://localhost:2019/users/users</a>
@@ -52,6 +56,7 @@ public class UserController
      * @return JSON object of the user you seek
      * @see UserService#findUserById(long) UserService.findUserById(long)
      */
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping(value = "/user/{userId}",
         produces = "application/json")
     public ResponseEntity<?> getUserById(
@@ -184,17 +189,19 @@ public class UserController
      * @return A status of OK
      * @see UserService#update(User, long) UserService.update(User, long)
      */
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping(value = "/user/{id}",
         consumes = "application/json")
     public ResponseEntity<?> updateUser(
         @RequestBody
             User updateUser,
         @PathVariable
-            long id)
+            long id
+        )
     {
-        userService.update(updateUser,
-            id);
-        return new ResponseEntity<>(HttpStatus.OK);
+            userService.update(updateUser, id);
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

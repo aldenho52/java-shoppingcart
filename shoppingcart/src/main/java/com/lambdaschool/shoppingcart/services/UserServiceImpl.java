@@ -33,11 +33,23 @@ public class UserServiceImpl
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private HelperFunctions helperFunctions;
+
+    @Autowired
+    private UserService userService;
+
     public User findUserById(long id) throws
                                       ResourceNotFoundException
     {
-        return userrepos.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not found!"));
+        User currentUser = findUserById(id);
+
+        if (helperFunctions.isAuthorizedToMakeChange(currentUser.getUsername())) {
+            return userrepos.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User id " + id + " not found!"));
+        } else {
+            throw new ResourceNotFoundException("User not authorized to make change");
+        }
     }
 
     @Override
@@ -124,53 +136,58 @@ public class UserServiceImpl
         User user,
         long id)
     {
-        if (user.getCarts()
-            .size() > 0)
-        {
-            throw new ResourceFoundException("Carts are not updated via Users");
-        }
-
         User currentUser = findUserById(id);
 
-        if (user.getUsername() != null)
+        if (helperFunctions.isAuthorizedToMakeChange(currentUser.getUsername()))
         {
-            currentUser.setUsername(user.getUsername()
-                .toLowerCase());
-        }
-
-        if (user.getPassword() != null)
-        {
-            currentUser.setPasswordNoEncrypt(user.getPassword());
-        }
-
-        if (user.getPrimaryemail() != null)
-        {
-            currentUser.setPrimaryemail(user.getPrimaryemail()
-                .toLowerCase());
-        }
-
-        if (user.getComments() != null)
-        {
-            currentUser.setComments(user.getComments());
-        }
-
-        if (user.getRoles()
-            .size() > 0)
-        {
-            currentUser.getRoles()
-                .clear();
-            for (UserRoles ur : user.getRoles())
+            if (user.getCarts()
+                .size() > 0)
             {
-                Role addRole = roleService.findRoleById(ur.getRole()
-                    .getRoleid());
-
-                currentUser.getRoles()
-                    .add(new UserRoles(currentUser,
-                        addRole));
+                throw new ResourceFoundException("Carts are not updated via Users");
             }
+
+            if (user.getUsername() != null)
+            {
+                currentUser.setUsername(user.getUsername()
+                    .toLowerCase());
+            }
+
+            if (user.getPassword() != null)
+            {
+                currentUser.setPasswordNoEncrypt(user.getPassword());
+            }
+
+            if (user.getPrimaryemail() != null)
+            {
+                currentUser.setPrimaryemail(user.getPrimaryemail()
+                    .toLowerCase());
+            }
+
+            if (user.getComments() != null)
+            {
+                currentUser.setComments(user.getComments());
+            }
+
+            if (user.getRoles()
+                .size() > 0)
+            {
+                currentUser.getRoles()
+                    .clear();
+                for (UserRoles ur : user.getRoles())
+                {
+                    Role addRole = roleService.findRoleById(ur.getRole()
+                        .getRoleid());
+
+                    currentUser.getRoles()
+                        .add(new UserRoles(currentUser,
+                            addRole));
+                }
+            }
+            return userrepos.save(currentUser);
+        } else {
+            throw new ResourceNotFoundException("This user is not authorized to make change");
         }
 
-        return userrepos.save(currentUser);
     }
 
     @Transactional

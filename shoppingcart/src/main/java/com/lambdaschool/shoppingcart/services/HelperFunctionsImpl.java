@@ -2,7 +2,9 @@ package com.lambdaschool.shoppingcart.services;
 
 import com.lambdaschool.shoppingcart.exceptions.ResourceNotFoundException;
 import com.lambdaschool.shoppingcart.models.ValidationError;
+import com.lambdaschool.shoppingcart.repository.UserRepository;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,11 @@ import java.util.List;
 public class HelperFunctionsImpl
     implements HelperFunctions
 {
+
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userrepos;
     /**
      * A public field used to store data from another API. This will have to be populated each time the application is run.
      * Population is done manually for each country code using an endpoint.
